@@ -24,7 +24,7 @@ Route::post('user/register', function (Request $request) {
     $rules = [
       'name' => 'required|max:255',
       'password' => 'required|max:30|min:8',
-      'email' => 'required|email|max:255|unique:users'
+      'email' => 'required|email|max:255|unique:USER'
     ];
 
     $validator = Validator::make($credentials, $rules);
@@ -36,8 +36,7 @@ Route::post('user/register', function (Request $request) {
     $name = $request->name;
     $email = $request->email;
     $password = $request->password;
-    $id = 4;
-    /*
+    
     $id = (DB::table('users')->count() + 1);
 
     DB::table('users')->insert([
@@ -46,11 +45,14 @@ Route::post('user/register', function (Request $request) {
       'email' => $email,
       'password' => $password
     ]);
-    */
+    
     return response()->json([
       'success' => true,
       'userid' => $id
     ]);
+});
+Route::post('user/add', function (Request $request) {
+  
 });
 
 
