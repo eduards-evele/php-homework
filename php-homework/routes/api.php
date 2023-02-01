@@ -37,9 +37,9 @@ Route::post('user/register', function (Request $request) {
     $email = $request->email;
     $password = $request->password;
     
-    $id = (DB::table('USER')->count() + 1);
+    $id = (DB::table('users')->count() + 1);
 
-    DB::table('USER')->insert([
+    DB::table('users')->insert([
       'id' => $id,
       'name' => $name,
       'email' => $email,
