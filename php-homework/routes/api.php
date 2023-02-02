@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Api\AuthController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,48 +14,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::post('user/register', function (Request $request) {
-    $credentials = $request->only('name', 'email', 'password');
-    
-    $rules = [
-      'name' => 'required|max:255',
-      'password' => 'required|max:30|min:8',
-      'email' => 'required|email|max:255|unique:USER'
-    ];
-
-    $validator = Validator::make($credentials, $rules);
-    
-    if($validator->fails()) {
-      return response()->json(['success'=> false, 'error'=> $validator->messages()]);
-    }
-
-    $name = $request->name;
-    $email = $request->email;
-    $password = $request->password;
-    
-    $id = (DB::table('users')->count() + 1);
-
-    DB::table('users')->insert([
-      'id' => $id,
-      'name' => $name,
-      'email' => $email,
-      'password' => $password
-    ]);
-    
-    return response()->json([
-      'success' => true,
-      'userid' => $id
-    ]);
-});
-Route::post('user/add', function (Request $request) {
-  
-});
+Route::post('/register', [AuthController::class, 'createUser']);
+Route::post('/login', [AuthController::class, 'loginUser'])->name('login');
 
 
-Route::get('foo', function () {
-    return 'Hello World';
+Route::group(['middleware' => ['auth:sanctum']], function () {
+  Route::post('/me', function(Request $request) {
+      return auth()->user();
+  });
+  Route::post('/somepage', function() {
+    return 'aaa';
+  } )->middleware('auth:sanctum');
 });
