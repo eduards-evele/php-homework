@@ -14,12 +14,16 @@ use App\Http\Controllers\Api\AuthController;
 |
 */
 
-Route::post('/register', [AuthController::class, 'createUser']);
-Route::post('/login', [AuthController::class, 'loginUser'])->name('login');
+Route::post('/user/register', [AuthController::class, 'createUser']);
+Route::post('/user/login', [AuthController::class, 'loginUser'])->name('login');
 
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
-  
+  Route::get('/item/get', function(Request $request) {
+    $owner_id = auth('sanctum')->user()->id;
+    $data = DB::table('item')->where('owner_id', $owner_id)->get();
+    return $data;
+  });
   Route::post('/item/register', function(Request $request) {
     $credentials = $request->only('name', 'quantity', 'available', 'description');
     
