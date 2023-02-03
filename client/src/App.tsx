@@ -1,11 +1,12 @@
+import axios from 'axios'
 import { useState } from 'react'
 import { css, StyleSheet } from 'aphrodite'
 import { User, Item, SignupData, LoginData, ItemData, Pages } from './types'
 import { GlobalStyleSheet } from './styles/global'
+import { API_HOSTNAME } from './helpers/config'
 import { AppStore } from './helpers/context'
 import Dashboard from './views/Dashboard'
 import Header from './components/Header'
-import { delay } from './helpers/delay'
 import Modal from './components/Modal'
 import Signup from './views/Signup'
 import Login from './views/Login'
@@ -14,107 +15,134 @@ import Login from './views/Login'
 function App() {
   const [user, setUser] = useState<null | User>(null)
   const [page, setPage] = useState<Pages>(Pages.LOGIN)
+  const [token, setToken] = useState<null | string>(null)
   const [items, setItems] = useState<null | Item[]>(null)
   const [component, setComponent] = useState<null | JSX.Element>(null)
 
   const fetchItems = async () => {
-    setItems([
-      {
-        id: 1,
-        userId: 1,
-        quantity: 10,
-        name: 'Item 1',
-        isAvailable: true,
-        description: 'description'
-      },
-      {
-        id: 2,
-        userId: 1,
-        quantity: 13,
-        name: 'Item 2',
-        isAvailable: true,
-        description: 'description'
-      },
-      {
-        id: 3,
-        userId: 1,
-        quantity: 1,
-        name: 'Item 3',
-        isAvailable: false,
-        description: 'description'
-      }
-    ])
+    try {
+      const method = 'GET'
+      const url = `${API_HOSTNAME}/items/get`
+      const headers = { 'Authorization': `Bearer ${token}` }
+
+      const { data } = await axios({ url, headers, method })
+
+      setItems(data.data)
+    } catch { }
   }
 
   const login = async (
     data: LoginData,
     onErr?: (err?: string) => void
   ) => {
-    await delay(3000)
+    try {
+      const method = 'POST'
+      const url = `${API_HOSTNAME}/users/login`
 
-    setUser({
-      id: 1,
-      name: 'Vasya Pupkin',
-      email: 'vasya@gmail.com'
-    })
+      const { data: { token, error, user } } = await axios({ url, data, method })
 
-    setPage(Pages.DASHBOARD)
+      if (token) {
+        const split = token.split(' ')
+
+        setToken(split[1])
+
+        setUser(user)
+
+        return setPage(Pages.DASHBOARD)
+      }
+
+      if (onErr) onErr(error)
+    } catch { }
   }
 
   const signup = async (
     data: SignupData,
     onErr?: (err?: string) => void
   ) => {
-    await delay(3000)
+    try {
+      const method = 'POST'
+      const url = `${API_HOSTNAME}/users/register`
 
-    setUser({
-      id: 1,
-      name: 'Vasya Pupkin',
-      email: 'vasya@gmail.com'
-    })
+      const { data: { token, error, user } } = await axios({ url, data, method })
 
-    setPage(Pages.DASHBOARD)
+      if (token) {
+        const split = token.split(' ')
+
+        setToken(split[1])
+
+        setUser(user)
+
+        return setPage(Pages.DASHBOARD)
+      }
+
+      if (onErr) onErr(error)
+    } catch { }
   }
 
   const onItemDel = async (id: number) => {
     setItems((i) => i!.filter((_i) => _i.id !== id))
+
+    try {
+      const data = { id }
+      const method = 'POST'
+      const url = `${API_HOSTNAME}/items/delete`
+      const headers = { 'Authorization': `Bearer ${token}` }
+
+      await axios({ url, data, method, headers })
+    } catch { }
   }
 
-  const onItemAdd = async (
-    data: ItemData
-  ) => {
-    setItems((i) => {
-      if (i && user) {
-        return [
-          { id: i.length, userId: user.id, ...data },
-          ...i
-        ]
-      }
+  const onItemAdd = async (data: ItemData) => {
+    try {
+      const method = 'POST'
+      const url = `${API_HOSTNAME}/items/register`
+      const headers = { 'Authorization': `Bearer ${token}` }
 
-      return i
-    })
+      const res = await axios({ headers, method, data, url })
+
+      setItems((i) => {
+        if (i && user) {
+          return [
+            res.data.data,
+            ...i
+          ]
+        }
+
+        return i
+      })
+
+    } catch { }
   }
 
   const onItemEdit = async (
     id: number,
-    data: ItemData
+    payload: ItemData
   ) => {
-    setItems((i) => {
-      if (i) {
-        const item = i.find((it) => it.id === id)
+    try {
+      const method = 'POST'
+      const data = { ...payload, id }
+      const url = `${API_HOSTNAME}/items/register`
+      const headers = { 'Authorization': `Bearer ${token}` }
 
-        if (item) {
-          item.description = data.description
-          item.isAvailable = data.isAvailable
-          item.quantity = data.quantity
-          item.name = data.name
+      await axios({ headers, method, data, url })
 
-          return [item, ...i.filter((it) => it.id !== id)]
+      setItems((i) => {
+        if (i) {
+          const item = i.find((it) => it.id === id)
+
+          if (item) {
+            item.description = data.description
+            item.isAvailable = data.isAvailable
+            item.quantity = data.quantity
+            item.name = data.name
+
+            return [item, ...i.filter((it) => it.id !== id)]
+          }
         }
-      }
 
-      return i
-    })
+        return i
+      })
+    } catch { }
   }
 
   const onLogout = () => {
