@@ -10,27 +10,29 @@ import Input from '../components/Input'
 
 const Login = () => {
   const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [disabled, setDisabled] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  const { signup } = useContext(AppStore)
+
   useEffect(() => {
     setDisabled(
       loading ||
       !validator.isEmail(email) ||
+      !validator.isAlphanumeric(username) ||
       !validator.isLength(password, { min: 8 })
     )
-  }, [email, password, loading])
-
-  const { login } = useContext(AppStore)
+  }, [email, password, username, loading])
 
   const onClick = async () => {
     setLoading(true)
     setError(null)
 
-    await login(
-      { email, password },
+    await signup(
+      { email, username, password },
       (err) => {
         setLoading(false)
         setError(err || 'Unexpected error happened, we are sorry')
@@ -39,16 +41,11 @@ const Login = () => {
   }
 
   const style = StyleSheet.create({
-    space: { marginBottom: 24 },
-    error: {
-      color: 'var(--dark-red)',
-      fontWeight: 400,
-      fontSize: 14
-    }
+    space: { marginBottom: 24 }
   })
 
   return (
-    <Dialog label="Log In">
+    <Dialog label="Sign Up">
       {
         !!error && (
           <div className={css(style.space)}>
@@ -56,6 +53,14 @@ const Login = () => {
           </div>
         )
       }
+      <div className={css(style.space)}>
+        <Input
+          type="text"
+          value={username}
+          label="Your Username"
+          setValue={setUsername}
+        />
+      </div>
       <div className={css(style.space)}>
         <Input
           type="email"
@@ -75,7 +80,7 @@ const Login = () => {
       <div>
         <Button
           fullcontainer
-          label="Log In"
+          label="Sign Up"
           {...{ onClick, disabled }}
           color={disabled ? 'var(--answer)' : 'var(--opposite-contrast)'}
         />

@@ -1,11 +1,15 @@
 import { useContext } from 'react'
 import { css, StyleSheet } from 'aphrodite'
 import { AppStore } from '../helpers/context'
+import Form from '../views/ItemForm'
 import { Pages } from '../types'
 
 
 const Header = () => {
-  const { user, page, onLogout, resetPage } = useContext(AppStore)
+  const {
+    user, page, toggleModal,
+    onLogout, resetPage
+  } = useContext(AppStore)
 
   const stylesheet = StyleSheet.create({
     container: {
@@ -34,7 +38,7 @@ const Header = () => {
     },
     button: {
       fontSize: 13,
-      marginLeft: 12,
+      marginLeft: 24,
       fontWeight: 600,
       cursor: 'pointer',
       color: 'var(--dark-clr)',
@@ -50,12 +54,24 @@ const Header = () => {
       <div className={css(stylesheet.buttons)}>
         {
           user && (
-            <button
-              onClick={onLogout}
-              className={css(stylesheet.button)}
-            >
-              Logout
-            </button>
+            <>
+              <button
+                className={css(stylesheet.button)}
+                onClick={() =>
+                  toggleModal(
+                    <Form mode="CREATE" />
+                  )
+                }
+              >
+                Add Item
+              </button>
+              <button
+                onClick={onLogout}
+                className={css(stylesheet.button)}
+              >
+                Logout
+              </button>
+            </>
           )
         }
         {
