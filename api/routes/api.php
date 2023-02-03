@@ -19,11 +19,13 @@ Route::post('/user/login', [AuthController::class, 'loginUser'])->name('login');
 
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
+
   Route::get('/item/get', function(Request $request) {
     $owner_id = auth('sanctum')->user()->id;
     $data = DB::table('item')->where('owner_id', $owner_id)->get();
     return $data;
   });
+
   Route::post('/item/register', function(Request $request) {
     $credentials = $request->only('name', 'quantity', 'available', 'description');
     
@@ -45,10 +47,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     $owner_id = auth('sanctum')->user()->id;
     $available = $request->available;
     $description = $request->description;
-    $id = (DB::table('item')->count() + 1);
+
 
     DB::table('item')->insert([
-      'id' => $id,
       'name' => $name,
       'QUANTITY' => $quantity,
       'owner_id' => $owner_id,
@@ -62,9 +63,17 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     ]);
 
   } );
+
   Route::post('/item/update', function(Request $request) {
-    $credentials = $request->only('id', 'name', 'quantity', 'available', 'description');
-    
+    $params = $request->only('id', 'name', 'quantity', 'available', 'description');
+    $record_exisist = DB::table('item')->where('id', $request->id)->exists();
+
+    if(!$record_exisist) {
+      return response()->json([
+        'success' => false,
+        'message' => 'record do not exist'
+      ]);
+    }
     $rules = [
       'id' => 'required|numeric',
       'name' => 'max:255|unique:item',
@@ -108,10 +117,12 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
       ]);
       
     }
-
+    
   } );
+
   Route::post('/item/delete', function(Request $request) {
     $params = $request->only('id');
+    $record_exisist = DB::table('item')->where('id', $request->id)->exists();
     $owner_id = auth('sanctum')->user()->id;
     $item_owner_id = DB::table('item')->select('owner_id')->where('id', $request->id)->first()->owner_id;
    
