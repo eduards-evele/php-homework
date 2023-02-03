@@ -8,10 +8,12 @@ export const AppStore = createContext<AppStateContext>({
   onItemDel: async () => { },
   onItemAdd: async () => { },
   signup: async () => { },
+  toggleModal: () => { },
   login: async () => { },
   resetPage: () => { },
   onLogout: () => { },
   page: Pages.LOGIN,
+  component: null,
   items: null,
   user: null
 })
