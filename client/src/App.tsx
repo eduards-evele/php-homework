@@ -22,7 +22,7 @@ function App() {
   const fetchItems = async () => {
     try {
       const method = 'GET'
-      const url = `${API_HOSTNAME}/items/get`
+      const url = `${API_HOSTNAME}/api/items/get`
       const headers = { 'Authorization': `Bearer ${token}` }
 
       const { data } = await axios({ url, headers, method })
@@ -37,7 +37,7 @@ function App() {
   ) => {
     try {
       const method = 'POST'
-      const url = `${API_HOSTNAME}/users/login`
+      const url = `${API_HOSTNAME}/api/users/login`
 
       const { data: { token, error, user } } = await axios({ url, data, method })
 
@@ -61,7 +61,7 @@ function App() {
   ) => {
     try {
       const method = 'POST'
-      const url = `${API_HOSTNAME}/users/register`
+      const url = `${API_HOSTNAME}/api/users/register`
 
       const { data: { token, error, user } } = await axios({ url, data, method })
 
@@ -85,7 +85,7 @@ function App() {
     try {
       const data = { id }
       const method = 'POST'
-      const url = `${API_HOSTNAME}/items/delete`
+      const url = `${API_HOSTNAME}/api/items/delete`
       const headers = { 'Authorization': `Bearer ${token}` }
 
       await axios({ url, data, method, headers })
@@ -95,7 +95,7 @@ function App() {
   const onItemAdd = async (data: ItemData) => {
     try {
       const method = 'POST'
-      const url = `${API_HOSTNAME}/items/register`
+      const url = `${API_HOSTNAME}/api/items/register`
       const headers = { 'Authorization': `Bearer ${token}` }
 
       const res = await axios({ headers, method, data, url })
@@ -121,7 +121,7 @@ function App() {
     try {
       const method = 'POST'
       const data = { ...payload, id }
-      const url = `${API_HOSTNAME}/items/register`
+      const url = `${API_HOSTNAME}/api/items/register`
       const headers = { 'Authorization': `Bearer ${token}` }
 
       await axios({ headers, method, data, url })
