@@ -42,7 +42,7 @@ function App() {
       const { data: { token, error, user } } = await axios({ url, data, method })
 
       if (token) {
-        const split = token.split(' ')
+        const split = token.split('|')
 
         setToken(split[1])
 
@@ -66,7 +66,7 @@ function App() {
       const { data: { token, error, user } } = await axios({ url, data, method })
 
       if (token) {
-        const split = token.split(' ')
+        const split = token.split('|')
 
         setToken(split[1])
 
