@@ -12,7 +12,6 @@ const Dashboard = () => {
   const _fetch = useRef(fetchItems)
 
   const fetchingItems = useRef(false)
-  //console.log(items)
   useEffect(() => {
     const fetch = async () => {
       fetchingItems.current = true
@@ -36,7 +35,6 @@ const Dashboard = () => {
   })
 
   const hasItems = (items.length > 0)
-  //console.log(items)
   return (
     <main className={css(stylesheet.container)}>
       <div className={css(stylesheet.space)}>

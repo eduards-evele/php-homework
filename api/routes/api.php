@@ -12,7 +12,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
   Route::get('/items/get', function(Request $request) {
     $owner_id = auth('sanctum')->user()->id;
     $data = DB::table('items')->where('owner_id', $owner_id)->get();
-    //return 
     return $data;
   });
 
@@ -62,7 +61,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     ]);
 
   });
-
 
   Route::post('/items/update', function(Request $request) {
     $params = $request->only('id', 'name', 'quantity', 'available', 'description');
