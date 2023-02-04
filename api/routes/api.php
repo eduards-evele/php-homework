@@ -98,9 +98,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
       $updated_row = DB::table('items')->select('*')->where('id', $request->id)->first();
       $updated_record = DB::table('items')->where('id', $request->id)->where('owner_id', $owner_id)->update([
         'name' => ($name == null) ? $updated_row->NAME : $name,
-        'quantity' => ($quantity == null) ? $updated_row->QUANTITY : $quantity,
-        'available' => ($available == null) ? $updated_row->AVAILABLE: $available,
-        'description' => ($description == null) ? $updated_row->DESCRIPTION : $description,
+        'quantity' => ($quantity == null) ? $updated_row->quantity : $quantity,
+        'available' => ($available == null) ? $updated_row->available: $available,
+        'description' => ($description == null) ? $updated_row->description : $description,
       ]);
 
       return response()->json([
