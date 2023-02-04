@@ -10,16 +10,16 @@ export enum Pages {
 export interface Item {
   id: number
   name: string
-  userId: number
+  owner_id: number
   quantity: number
   description: string
-  isAvailable: boolean
+  available: boolean
 }
 
 
 export interface User {
   id: number
-  name: string
+  username: string
   email: string
 }
 
@@ -41,7 +41,7 @@ export interface ItemData {
   name: string
   quantity: number
   description: string
-  isAvailable: boolean
+  available: boolean
 }
 
 

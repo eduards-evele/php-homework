@@ -12,7 +12,7 @@ const Dashboard = () => {
   const _fetch = useRef(fetchItems)
 
   const fetchingItems = useRef(false)
-
+  //console.log(items)
   useEffect(() => {
     const fetch = async () => {
       fetchingItems.current = true
@@ -36,12 +36,12 @@ const Dashboard = () => {
   })
 
   const hasItems = (items.length > 0)
-
+  //console.log(items)
   return (
     <main className={css(stylesheet.container)}>
       <div className={css(stylesheet.space)}>
         <div className={css(stylesheet.title)}>
-          {`Hi, ${user.name}`}
+          {`Hi, ${user.username}`}
         </div>
       </div>
       <div className={css(stylesheet.space)}>
@@ -97,7 +97,7 @@ const Dashboard = () => {
 
 
 const Section: React.FC<Item> = ({
-  id, name, quantity, isAvailable
+  id, name, quantity, available
 }) => {
   const { onItemDel, toggleModal } = useContext(AppStore)
 
@@ -117,7 +117,7 @@ const Section: React.FC<Item> = ({
         {quantity}
       </div>
       <div className={css([stylesheet.container, stylesheet.title])}>
-        {isAvailable ? 'Available' : 'Unavailable'}
+        {available ? 'Available' : 'Unavailable'}
       </div>
       <div className={css([stylesheet.container, stylesheet.flex])}>
         <div className={css(stylesheet.space)}>

@@ -27,7 +27,7 @@ const Item: React.FC<Props> = ({ mode, id }) => {
   const [name, setName] = useState(item ? item.name : '')
   const [quantity, setQuantity] = useState(item ? item.quantity : 0)
   const [description, setDescription] = useState(item ? item.description : '')
-  const [isAvailable, setAvailability] = useState(!!(item && item.isAvailable))
+  const [available, setAvailability] = useState(!!(item && item.available))
 
   useEffect(() => {
     setDisabled(
@@ -56,11 +56,11 @@ const Item: React.FC<Props> = ({ mode, id }) => {
 
     mode === 'EDIT'
       ? await onItemEdit(id!, {
-        name, isAvailable,
+        name, available,
         quantity, description
       })
       : await onItemAdd({
-        name, isAvailable,
+        name, available,
         quantity, description
       })
 
@@ -103,7 +103,7 @@ const Item: React.FC<Props> = ({ mode, id }) => {
       <div className={css(style.space)}>
         <Checkbox
           label="Is available"
-          checked={isAvailable}
+          checked={available}
           onCheck={setAvailability}
         />
       </div>

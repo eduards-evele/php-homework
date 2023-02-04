@@ -25,8 +25,8 @@ function App() {
       const url = `${API_HOSTNAME}/api/items/get`
       const headers = {'Accept' : 'application/json', 'Authorization': `Bearer ${token}` }
 
-      const { data } = await axios({ url, headers, method })
-
+      const  data  = await axios({ url, headers, method })
+      
       setItems(data.data)
     } catch { }
   }
@@ -38,16 +38,16 @@ function App() {
     try {
       const method = 'POST'
       const url = `${API_HOSTNAME}/api/users/login`
-
+      
       const { data: { token, error, user } } = await axios({ url, data, method })
 
       if (token) {
-        const split = token.split(' ')
+        const split = token.split('|')
 
         setToken(split[1])
-
+        
         setUser(user)
-
+        
         return setPage(Pages.DASHBOARD)
       }
 
@@ -99,18 +99,18 @@ function App() {
       const headers = { 'Accept' : 'application/json', 'Authorization': `Bearer ${token}` }
 
       const res = await axios({ headers, method, data, url })
-
+    
       setItems((i) => {
         if (i && user) {
           return [
-            res.data.data,
+            res.data.item,
             ...i
           ]
         }
-
+      
         return i
       })
-
+      
     } catch { }
   }
 
@@ -121,18 +121,19 @@ function App() {
     try {
       const method = 'POST'
       const data = { ...payload, id }
-      const url = `${API_HOSTNAME}api/items/register`
+      const url = `${API_HOSTNAME}/api/items/update`
+      
       const headers = {'Accept' : 'application/json',  'Authorization': `Bearer ${token}` }
 
-      await axios({ headers, method, data, url })
-
+      const res = await axios({ headers, method, data, url })
+      
       setItems((i) => {
         if (i) {
           const item = i.find((it) => it.id === id)
 
           if (item) {
             item.description = data.description
-            item.isAvailable = data.isAvailable
+            item.available = data.available
             item.quantity = data.quantity
             item.name = data.name
 

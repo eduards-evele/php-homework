@@ -12,6 +12,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
   Route::get('/items/get', function(Request $request) {
     $owner_id = auth('sanctum')->user()->id;
     $data = DB::table('items')->where('owner_id', $owner_id)->get();
+    //return 
     return $data;
   });
 
@@ -36,7 +37,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     $owner_id = auth('sanctum')->user()->id;
     $available = $request->available;
     $description = $request->description;
-
+    $idx=DB::select("SHOW TABLE STATUS LIKE 'items'");
+    $next_id=$idx[0]->Auto_increment;
+ 
     DB::table('items')->insert([
       'name' => $name,
       'quantity' => $quantity,
@@ -47,7 +50,15 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     return response()->json([
       'success' => true,
-      'userid' => $owner_id
+      'userid' => $owner_id,
+      'item' => ([
+        'id' => $next_id,
+        'name' => $name,
+        'quantity' => $quantity,
+        'owner_id' => $owner_id,
+        'available' => $available,
+        'description' => $description
+      ])
     ]);
 
   });
@@ -66,7 +77,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     $rules = [
       'id' => 'required|numeric',
-      'name' => 'max:255|unique:items',
+      'name' => 'max:255',
       'quantity' => 'nullable|numeric',
       'available' => 'nullable|boolean',
       'description' => '|max:255'
